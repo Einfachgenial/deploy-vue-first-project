@@ -1,28 +1,30 @@
-import './assets/main.css'
+import { createStore } from 'vuex';
 import db from '@/db.js'
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
-import { createStore } from 'vuex'
 import { collection, getDocs } from "firebase/firestore"; 
-//import store from "./store.js"
 
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap"
 
-  const store = createStore({
-    state () {
-        return {
-            projects: []
-        }
+export default createStore({
+    state: {
+        projects: [],
+        currentSong: null
       },
       mutations: {
         SET_PROJECTS(state, payload) {
           state.projects = payload;
-            console.log(state.projects)
         }
       },
       actions: {
+        /*fetchSongs({commit}) {
+          axios({
+            method: "get",
+            url: "https://orangevalleycaa.org/api/music",
+            params: {
+              order: "name"
+            }
+          })
+            .then(response => (commit("SET_PROJECTS", response.data)))
+            .catch(error => console.log(error));
+          }*/
          async fetchProjects({commit}) {
             const querySnapshot = await getDocs(collection(db, "projects"));
             const snapData = [];
@@ -33,20 +35,20 @@ import "bootstrap"
                  text: doc.data().text,
                  imageUrl: doc.data().imageurl,
                });
-               //console.log(snapData);
-              
-            });
-           commit("SET_PROJECTS", snapData)
+               commit("SET_PROJECTS", snapData)
+               
+           });
           }
       }
 });
 
 
-const app = createApp(App)
 
-app.use(router)
-app.use(store)
 
-app.mount('#app')
+
+
+
+
+
 
 
