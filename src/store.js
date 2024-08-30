@@ -2,53 +2,35 @@ import { createStore } from 'vuex';
 import db from '@/db.js'
 import { collection, getDocs } from "firebase/firestore"; 
 
-
+// Create Store from Vuex. store is global and can be reach from component with : const store = useStore();
+// 'state' are the all global variable are stored
+// From component you call with 'dispatch' an 'actions' function. Then the 'actions' calls the 'mutations'
 export default createStore({
-    state: {
-        projects: [],
-        currentSong: null
-      },
-      mutations: {
-        SET_PROJECTS(state, payload) {
-          state.projects = payload;
-        }
-      },
-      actions: {
-        /*fetchSongs({commit}) {
-          axios({
-            method: "get",
-            url: "https://orangevalleycaa.org/api/music",
-            params: {
-              order: "name"
-            }
-          })
-            .then(response => (commit("SET_PROJECTS", response.data)))
-            .catch(error => console.log(error));
-          }*/
-         async fetchProjects({commit}) {
-            const querySnapshot = await getDocs(collection(db, "projects"));
-            const snapData = [];
-             querySnapshot.forEach((doc) => {
-               snapData.push({
-                 id: doc.id,
-                 name: doc.data().name,
-                 text: doc.data().text,
-                 imageUrl: doc.data().imageurl,
-               });
-               commit("SET_PROJECTS", snapData)
-               
-           });
-          }
+  state () {
+      return {
+          projects: []
       }
+    },
+    mutations: {
+      SET_PROJECTS(state, payload) {
+        state.projects = payload;
+          console.log(state.projects)
+      }
+    },
+    actions: {
+       async fetchProjects({commit}) {
+          const querySnapshot = await getDocs(collection(db, "projects"));
+          const snapData = [];
+           querySnapshot.forEach((doc) => {
+             snapData.push({
+               id: doc.id,
+               name: doc.data().name,
+               text: doc.data().text,
+               imageUrl: doc.data().imageurl,
+             });
+             //console.log(snapData);
+          });
+         commit("SET_PROJECTS", snapData)
+        }
+    }
 });
-
-
-
-
-
-
-
-
-
-
-
